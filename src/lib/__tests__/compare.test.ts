@@ -194,6 +194,20 @@ describe("government warning", () => {
     expect(result.overall).toBe("fail");
   });
 
+  it("routes punctuation-only deviations to review (image-quality noise)", () => {
+    // A blurry photo can make the model read "defects." as "defects;".
+    const variant = GOVERNMENT_WARNING_FULL.replace("birth defects.", "birth defects;");
+    const result = verifyLabel(
+      {},
+      label({
+        governmentWarning: { present: true, verbatimText: variant, prefixAppearsBold: true },
+      }),
+    );
+    const field = result.fields.find((f) => f.field === "governmentWarning");
+    expect(field?.verdict).toBe("review");
+    expect(result.overall).toBe("review");
+  });
+
   it("fails reworded text and reports the deviation", () => {
     const reworded = GOVERNMENT_WARNING_FULL.replace("birth defects", "health issues");
     const result = verifyLabel(

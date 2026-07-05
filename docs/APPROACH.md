@@ -68,10 +68,14 @@ creative. The check:
 2. **Prefix case** — the statement must begin with `GOVERNMENT WARNING:` in capital
    letters. `Government Warning:` in title case fails (her real rejection example).
 3. **Word-for-word body** — compared token-by-token against the statutory text.
-   Any deviation fails, and the result includes a word-level diff ("required wording
-   not found: … / unexpected wording on label: …") so the agent sees exactly what
-   was changed. Whitespace and curly-quote variants are tolerated; wording changes
-   are not.
+   Any wording deviation fails, and the result includes a word-level diff ("required
+   wording not found: … / unexpected wording on label: …") so the agent sees exactly
+   what was changed. Whitespace and curly-quote variants are tolerated.
+   *Punctuation-only* deviations (e.g. "defects;" vs "defects.") go to **needs
+   review** instead of failing: on an imperfect photo they are as likely to be
+   transcription noise as a real label defect, and repeated runs on a blurry image
+   should never flip between pass and fail. Errors are always pushed toward human
+   review, never toward a silent pass.
 4. **Bold prefix** — best-effort: the vision model judges whether the prefix appears
    bolder than the body. Because typographic weight from a photo is inherently
    uncertain, "appears not bold" produces **needs review** rather than a hard fail,

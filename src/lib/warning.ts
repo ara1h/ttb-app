@@ -84,6 +84,21 @@ export function checkGovernmentWarning(
     if (diff.found.length > 0) {
       parts.push(`unexpected wording on label: "${diff.found.join(" ")}"`);
     }
+    // Punctuation-only deviations ("defects;" vs "defects.") are as likely to
+    // be transcription noise from an imperfect photo as a real label defect —
+    // route them to a human instead of hard-failing.
+    const strip = (w: string) => w.replace(/[^a-z0-9]/g, "");
+    const punctuationOnly =
+      expectedWords.map(strip).join(" ") === foundWords.map(strip).join(" ");
+    if (punctuationOnly) {
+      return {
+        ...FIELD_META,
+        verdict: "review",
+        applicationValue: GOVERNMENT_WARNING_FULL,
+        labelValue: warning.verbatimText,
+        detail: `The wording matches, but punctuation appears to differ — ${parts.join("; ")}. This may be an artifact of image quality; please verify against the label.`,
+      };
+    }
     return {
       ...FIELD_META,
       verdict: "mismatch",
