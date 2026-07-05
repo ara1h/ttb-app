@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* The tool is used by compliance agents on desktop monitors; keep a single,
+   high-contrast light theme regardless of OS dark-mode preference. */
+body {
+  background: #f3f4f6;
+  color: #111827;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
