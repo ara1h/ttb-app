@@ -1,5 +1,7 @@
 # Label Check — AI-Powered Alcohol Label Verification
 
+**Live demo: [ttb-app.vercel.app](https://ttb-app.vercel.app)**
+
 A prototype for TTB compliance agents that verifies alcohol beverage label artwork
 against the label application: upload a label image and the application details, and
 the app reads the label with AI vision, checks every field, and verifies the
@@ -8,6 +10,29 @@ Government Health Warning Statement word for word — with results in a few seco
 Built as a take-home project. The AI **extracts** what the label says; every
 **pass/fail decision** is made by deterministic, unit-tested code — so compliance
 rules stay auditable and adjustable without retraining or re-prompting a model.
+
+## A quick tour
+
+**Checking one label.** The agent types what the application says (or clicks a
+sample chip), adds the label image, and gets a field-by-field verdict in about
+3 seconds — here the label matches the application on every check, including the
+word-for-word government warning:
+
+![Single label check — all checks passed](docs/screenshots/single-check-pass.png)
+
+**Catching a real rejection case.** This label prints the warning prefix as
+"Government Warning:" in title case instead of the required all-caps. Every other
+field matches — a reviewer skimming by eye could miss it, but the check fails with
+an explanation of exactly what's wrong:
+
+![Warning prefix not in capital letters — issues found](docs/screenshots/single-check-warning-fail.png)
+
+**Checking a batch.** Drop in any number of label images plus an optional CSV of
+application data (matched by file name), and the queue processes concurrently with
+live progress. Each row expands to the full field-by-field detail, and the summary
+and CSV export give a triage-ready overview — agents start with the red rows:
+
+![Batch verification results](docs/screenshots/batch-results.png)
 
 ## What it does
 
@@ -60,6 +85,9 @@ or download the CSV template from the UI.
 
 ## Deploying to Vercel
 
+The prototype is deployed at [ttb-app.vercel.app](https://ttb-app.vercel.app). To
+deploy your own instance:
+
 1. Push this repository to GitHub.
 2. On [vercel.com](https://vercel.com), **Add New → Project**, import the repo
    (framework is auto-detected as Next.js — no settings to change).
@@ -96,8 +124,9 @@ src/
     normalize.ts           text normalization, Levenshtein, word diff
     mock.ts                demo-mode fixtures (no API key needed)
     client.ts              browser helpers: image downscale, batching, CSV
-scripts/generate-samples.mjs   regenerates the sample label images
-public/samples/                test labels + batch CSV
+scripts/generate-samples.mjs      regenerates the sample label images
+scripts/capture-screenshots.mjs   re-captures the README screenshots from the live app
+public/samples/                   test labels + batch CSV
 ```
 
 ## Approach, assumptions, and trade-offs
